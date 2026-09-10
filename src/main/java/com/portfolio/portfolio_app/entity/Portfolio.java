@@ -1,5 +1,7 @@
 package com.portfolio.portfolio_app.entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,8 +11,13 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Stock name cannot be blank")
     private String stockName;
+
+    @Positive(message = "Quantity must be greater than 0")
     private int quantity;
+
+    @Positive(message = "Price must be greater than 0")
     private double price;
 
     // relation with User

@@ -2,6 +2,8 @@ package com.portfolio.portfolio_app.controller;
 
 import java.util.List;
 
+import com.portfolio.portfolio_app.dto.PortfolioSummaryDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +19,7 @@ public class PortfolioController {
 
     // Add stock
     @PostMapping
-    public Portfolio addStock(@RequestBody Portfolio portfolio) {
+    public Portfolio addStock(@Valid @RequestBody Portfolio portfolio) {
         return portfolioService.addStock(portfolio);
     }
 
@@ -25,6 +27,12 @@ public class PortfolioController {
     @GetMapping("/user/{userId}")
     public List<Portfolio> getPortfolio(@PathVariable Long userId) {
         return portfolioService.getUserPortfolio(userId);
+    }
+
+    // Get portfolio summary
+    @GetMapping("/user/{userId}/summary")
+    public PortfolioSummaryDTO getPortfolioSummary(@PathVariable Long userId) {
+        return portfolioService.getPortfolioSummary(userId);
     }
 
 }

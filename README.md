@@ -51,7 +51,6 @@ The application allows users to register, log in securely, manage their stock po
 
 The application follows a layered architecture:
 
-```text
 src/main/java/com/portfolio/portfolio_app
 │
 ├── config
@@ -65,4 +64,133 @@ src/main/java/com/portfolio/portfolio_app
 │   └── TransactionController.java
 │
 ├── dto
-│   └── LoginRequest
+│   └── LoginRequest.java
+│
+├── entity
+│   ├── User.java
+│   ├── Portfolio.java
+│   └── Transaction.java
+│
+├── repository
+│
+├── service
+│   ├── CurrentUserService.java
+│   ├── CustomUserDetailsService.java
+│   └── JwtService.java
+│
+└── exception
+
+src/main/resources
+│
+├── static
+│   ├── index.html
+│   ├── login.html
+│   └── register.html
+│
+└── application.properties
+
+Getting Started
+Prerequisites
+Make sure you have installed:
+Java 17 or later
+Maven
+MySQL Server
+Git
+
+1. Clone the Repository
+git clone https://github.com/Rithu-dev/Portfolio_App.git
+Navigate to the project directory:
+cd Portfolio_App
+
+2. Create the MySQL Database
+CREATE DATABASE portfolio_db;
+
+3. Configure Application Properties
+Update src/main/resources/application.properties with your local database credentials and JWT configuration.
+spring.datasource.url=jdbc:mysql://localhost:3306/portfolio_db
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+
+jwt.secret=YOUR_BASE64_SECRET
+jwt.expiration=86400000
+
+Use a securely generated Base64 JWT secret. Never commit actual credentials or secrets to GitHub.
+
+4. Run the Application
+Using Maven:
+mvn spring-boot:run
+The application starts at:
+http://localhost:8080
+Open the registration page:
+http://localhost:8080/register.html
+
+After registration, log in to access the dashboard.
+## API Endpoints
+
+All protected endpoints require a valid JWT token in the request header:
+
+```http
+Authorization: Bearer <your_jwt_token>
+```
+
+### 1. Authentication
+
+| Method | Endpoint | Description | Access |
+|:---:|---|---|:---:|
+| POST | `/users` | Register a new user | Public |
+| POST | `/auth/login` | Authenticate user and generate JWT | Public |
+| GET | `/users/me` | Retrieve authenticated user details | Protected |
+
+### 2. User Management
+
+| Method | Endpoint | Description | Access |
+|:---:|---|---|:---:|
+| GET | `/users` | Retrieve all users | Protected |
+| GET | `/users/{id}` | Retrieve user by ID | Protected |
+| PUT | `/users/{id}` | Update user details | Protected |
+| DELETE | `/users/{id}` | Delete user by ID | Protected |
+
+### 3. Portfolio Management
+
+| Method | Endpoint | Description | Access |
+|:---:|---|---|:---:|
+| POST | `/portfolio` | Add a stock to the portfolio | Protected |
+| GET | `/portfolio/user/{userId}` | Retrieve portfolio holdings | Protected |
+| GET | `/portfolio/user/{userId}/summary` | Retrieve portfolio summary | Protected |
+
+### 4. Transaction Management
+
+| Method | Endpoint | Description | Access |
+|:---:|---|---|:---:|
+| POST | `/transactions` | Create a BUY/SELL transaction | Protected |
+| GET | `/transactions/user/{userId}` | Retrieve transaction history | Protected |
+
+## Security Implementation
+
+- Password encryption using BCrypt.
+- JWT-based authentication and authorization.
+- Custom JWT authentication filter integrated with Spring Security.
+- Stateless session management.
+- Protected REST APIs.
+- User-specific portfolio access control to prevent unauthorized access.
+
+## Future Enhancements
+
+- Integrate live stock market price APIs.
+- Connect dashboard metrics and holdings to backend APIs.
+- Complete frontend BUY/SELL transaction integration.
+- Enhance transaction history and portfolio visualizations.
+- Migrate monetary calculations from `double` to `BigDecimal`.
+- Implement database versioning using Flyway.
+- Add unit and integration tests.
+- Containerize the application using Docker.
+
+## Author
+
+**Rithu**
+- GitHub: [Rithu-dev](https://github.com/Rithu-dev)
+- Project Repository: [Stock Portfolio Management System](https://github.com/Rithu-dev/Portfolio_App)
+
+---
+
+*Developed as a hands-on project to strengthen Java backend development skills and explore real-world application architecture.*

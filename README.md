@@ -49,82 +49,122 @@ The application allows users to register, log in securely, manage their stock po
 
 ## Project Architecture
 
-The application follows a layered architecture:
+The application follows a **layered architecture**, separating configuration, controllers, business logic, database operations, and entities.
 
-src/main/java/com/portfolio/portfolio_app
+### Backend Structure
+
+```text
+src/main/java/com/portfolio/portfolio_app/
 │
-├── config
+├── config/
 │   ├── SecurityConfig.java
 │   └── JwtAuthenticationFilter.java
 │
-├── controller
+├── controller/
 │   ├── AuthController.java
 │   ├── UserController.java
 │   ├── PortfolioController.java
 │   └── TransactionController.java
 │
-├── dto
+├── dto/
 │   └── LoginRequest.java
 │
-├── entity
+├── entity/
 │   ├── User.java
 │   ├── Portfolio.java
 │   └── Transaction.java
 │
-├── repository
+├── repository/
 │
-├── service
+├── service/
 │   ├── CurrentUserService.java
 │   ├── CustomUserDetailsService.java
 │   └── JwtService.java
 │
-└── exception
+└── exception/
+```
 
-src/main/resources
+### Frontend and Configuration
+
+```text
+src/main/resources/
 │
-├── static
+├── static/
 │   ├── index.html
 │   ├── login.html
 │   └── register.html
 │
 └── application.properties
+```
 
-Getting Started
-Prerequisites
-Make sure you have installed:
-Java 17 or later
-Maven
-MySQL Server
-Git
+## Getting Started
 
-1. Clone the Repository
+Follow these instructions to set up and run the application locally.
+
+### Prerequisites
+
+Make sure the following are installed:
+
+- Java 17 or later
+- Apache Maven
+- MySQL Server
+- Git
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/Rithu-dev/Portfolio_App.git
+```
+
 Navigate to the project directory:
+
+```bash
 cd Portfolio_App
+```
 
-2. Create the MySQL Database
+### 2. Create the MySQL Database
+
+Open MySQL and execute:
+
+```sql
 CREATE DATABASE portfolio_db;
+```
 
-3. Configure Application Properties
-Update src/main/resources/application.properties with your local database credentials and JWT configuration.
+### 3. Configure Application Properties
+
+Open `src/main/resources/application.properties` and configure your local database credentials and JWT settings.
+
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/portfolio_db
 spring.datasource.username=YOUR_DB_USERNAME
 spring.datasource.password=YOUR_DB_PASSWORD
 
 jwt.secret=YOUR_BASE64_SECRET
 jwt.expiration=86400000
+```
 
-Use a securely generated Base64 JWT secret. Never commit actual credentials or secrets to GitHub.
+**Important:**
+- Replace the database username and password with your local MySQL credentials.
+- Generate a secure Base64-encoded JWT secret.
+- Never commit actual database credentials or JWT secrets to GitHub.
 
-4. Run the Application
-Using Maven:
+### 4. Run the Application
+
+Start the application using Maven:
+
+```bash
 mvn spring-boot:run
-The application starts at:
-http://localhost:8080
-Open the registration page:
-http://localhost:8080/register.html
+```
 
-After registration, log in to access the dashboard.
+Once the application starts successfully, access it at:
+
+**Application URL:** http://localhost:8080
+
+**Registration:** http://localhost:8080/register.html
+
+**Login:** http://localhost:8080/login.html
+
+After registration, log in using your credentials to access the dashboard.
 ## API Endpoints
 
 All protected endpoints require a valid JWT token in the request header:

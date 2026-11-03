@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.portfolio.portfolio_app.entity.Portfolio;
+import com.portfolio.portfolio_app.entity.User;
 import com.portfolio.portfolio_app.repository.PortfolioRepository;
 
 @Service
@@ -13,7 +14,8 @@ public class PortfolioService {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
-    public Portfolio addStock(Portfolio portfolio) {
+    public Portfolio addStock(Portfolio portfolio, User user) {
+        portfolio.setUser(user);
         return portfolioRepository.save(portfolio);
     }
 

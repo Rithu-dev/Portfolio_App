@@ -5,13 +5,21 @@ import com.portfolio.portfolio_app.entity.User;
 import com.portfolio.portfolio_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.portfolio.portfolio_app.service.CurrentUserService;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    @Autowired
+    private CurrentUserService currentUserService;
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/me")
+    public User getCurrentUser() {
+        return currentUserService.getCurrentUser();
+    }
 
     // Create
     @PostMapping

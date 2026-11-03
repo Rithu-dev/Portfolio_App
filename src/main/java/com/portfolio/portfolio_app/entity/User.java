@@ -1,6 +1,7 @@
 package com.portfolio.portfolio_app.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
@@ -11,7 +12,12 @@ public class User {
     private Long id;
 
     private String name;
+    @Column (unique = true, nullable = false)
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
+    private String password;
 
     public Long getId() {
         return id;
@@ -25,6 +31,10 @@ public class User {
         return email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -35,5 +45,9 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

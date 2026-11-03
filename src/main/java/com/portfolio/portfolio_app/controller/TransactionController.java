@@ -1,8 +1,12 @@
+
 package com.portfolio.portfolio_app.controller;
 
 import com.portfolio.portfolio_app.entity.Transaction;
+import com.portfolio.portfolio_app.entity.User;
 import com.portfolio.portfolio_app.service.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.portfolio.portfolio_app.service.CurrentUserService;
+
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,16 +15,31 @@ import java.util.List;
 @RequestMapping("/transactions")
 public class TransactionController {
 
-    @Autowired
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
+    private final CurrentUserService currentUserService;
+
+    public TransactionController(
+            TransactionService transactionService,
+            CurrentUserService currentUserService) {
+        this.transactionService = transactionService;
+        this.currentUserService = currentUserService;
+    }
 
     @PostMapping
     public Transaction addTransaction(@RequestBody Transaction transaction) {
-        return transactionService.addTransaction(transaction);
+        User user = currentUserService.getCurrentUser();
+        return transactionService.addTransaction(transaction, user);
     }
 
     @GetMapping("/user/{userId}")
     public List<Transaction> getUserTransactions(@PathVariable Long userId) {
-        return transactionService.getUserTransactions(userId);
+
+        Long currentUserId = currentUserService.getCurrentUserId();
+
+        if (!currentUserId.equals(userId)) {
+            throw new AccessDeniedException("You cannot access another user's transactions");
+        }
+
+        return transactionService.getUserTransactions(currentUserId);
     }
 }

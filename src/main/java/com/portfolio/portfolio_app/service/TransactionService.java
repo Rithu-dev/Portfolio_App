@@ -6,6 +6,8 @@ import com.portfolio.portfolio_app.entity.Transaction;
 import com.portfolio.portfolio_app.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.portfolio.portfolio_app.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,11 +20,37 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public Transaction addTransaction(Transaction transaction) {
+    @Transactional
+    public Transaction addTransaction(Transaction transaction, User user) {
+
+        transaction.setUser(user);
+        if (transaction.getUser() == null ||
+                transaction.getUser().getId() == null) {
+            throw new IllegalArgumentException("User is required");
+        }
+
+        if (transaction.getStockName() == null ||
+                transaction.getStockName().isBlank()) {
+            throw new IllegalArgumentException("Stock name is required");
+        }
+
+        if (transaction.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero");
+        }
+
+        if (transaction.getPrice() <= 0) {
+            throw new IllegalArgumentException("Price must be greater than zero");
+        }
+
+        if (transaction.getType() == null ||
+                (!transaction.getType().equalsIgnoreCase("BUY") &&
+                        !transaction.getType().equalsIgnoreCase("SELL"))) {
+            throw new IllegalArgumentException("Transaction type must be BUY or SELL");
+        }
 
         transaction.setTransactionDate(LocalDateTime.now());
 
-        Transaction savedTransaction = transactionRepository.save(transaction);
+        // Transaction savedTransaction = transactionRepository.save(transaction);
 
         Long userId = transaction.getUser().getId();
 
@@ -41,10 +69,15 @@ public class TransactionService {
 
             if (existingPortfolio != null) {
 
-                existingPortfolio.setQuantity(
-                        existingPortfolio.getQuantity() + transaction.getQuantity());
+                int totalQuantity = existingPortfolio.getQuantity() + transaction.getQuantity();
 
-                existingPortfolio.setPrice(transaction.getPrice());
+                double totalInvestment = (existingPortfolio.getQuantity() * existingPortfolio.getPrice())
+                        + (transaction.getQuantity() * transaction.getPrice());
+                
+                double averagePrice = totalInvestment / totalQuantity;
+                
+                existingPortfolio.setQuantity(totalQuantity);
+                existingPortfolio.setPrice(averagePrice);
 
                 portfolioRepository.save(existingPortfolio);
 
@@ -82,6 +115,7 @@ public class TransactionService {
             }
         }
 
+        Transaction savedTransaction = transactionRepository.save(transaction);
         return savedTransaction;
     }
 

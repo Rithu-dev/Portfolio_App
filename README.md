@@ -2,7 +2,7 @@
 
 A full-stack, multi-user Stock Portfolio Management application built using **Java 17, Spring Boot, Spring Security, JWT Authentication, MySQL, and HTML/CSS/JavaScript**.
 
-The application enables users to securely manage their stock portfolios, execute BUY/SELL transactions, track holdings, and maintain transaction history. It implements transaction processing logic, user-level data authorization, and third-party financial API integration.
+The application enables users to securely manage their stock portfolios, execute BUY/SELL transactions, track holdings, and maintain transaction history. It implements transaction processing logic, user-level authorization, and third-party financial API integration.
 
 ## Features
 
@@ -41,7 +41,7 @@ The application enables users to securely manage their stock portfolios, execute
 - Separate dashboard sections for holdings, transactions, BUY, and SELL operations.
 - JWT-based API communication from the frontend.
 - Logout functionality.
-- Responsive interface built using HTML, CSS, and JavaScript.
+- Frontend built using HTML, CSS, and JavaScript.
 
 ### Validation & Exception Handling
 - Request validation using Jakarta Bean Validation.
@@ -53,8 +53,8 @@ The application enables users to securely manage their stock portfolios, execute
 
 | Category | Technologies |
 |---|---|
-| Language | Java 17 |
-| Backend | Spring Boot |
+| Programming Language | Java 17 |
+| Backend Framework | Spring Boot |
 | Security | Spring Security, JWT |
 | ORM | Spring Data JPA, Hibernate |
 | Database | MySQL |
@@ -125,60 +125,31 @@ src/main/resources
 
 ## API Endpoints
 
+All protected endpoints require a valid JWT token in the Authorization header.
+
+```http
+Authorization: Bearer <your_jwt_token>
+```
+
+### Authentication
+
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/users` | Register a new user |
 | POST | `/auth/login` | Authenticate user and generate JWT |
 | GET | `/users/me` | Retrieve authenticated user details |
-| POST | `/portfolio` | Add a portfolio holding |
-| GET | `/portfolio/user/{userId}` | Retrieve user-specific holdings |
-| GET | `/portfolio/user/{userId}/summary` | Retrieve portfolio summary |
-| POST | `/transactions` | Create a BUY/SELL transaction |
-| GET | `/transactions/user/{userId}` | Retrieve transaction history |
-| GET | `/market/price?symbol=AAPL` | Retrieve stock price from market data provider |
 
-**Note:** Protected endpoints require a valid JWT in the Authorization header.
+### User Management
 
-## Configuration
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/users` | Retrieve all users |
+| GET | `/users/{id}` | Retrieve user by ID |
+| PUT | `/users/{id}` | Update user details |
+| DELETE | `/users/{id}` | Delete user by ID |
 
-Configure your MySQL database and JWT settings in `application.properties`.
+### Portfolio Management
 
-Set the Twelve Data API key as an environment variable:
-
-```text
-TWELVE_DATA_API_KEY=your_api_key
-```
-
-Do not commit actual database passwords, JWT secrets, or API keys to version control.
-
-## Running the Application
-
-1. Clone the repository.
-2. Configure the MySQL database.
-3. Configure the required application properties and environment variables.
-4. Build the application using Maven:
-
-```bash
-mvn clean install
-```
-
-5. Start the Spring Boot application:
-
-```bash
-mvn spring-boot:run
-```
-
-6. Open the application in your browser:
-
-```text
-http://localhost:8080
-```
-
-## Future Enhancements
-
-- Integrate live market prices into dashboard portfolio valuation.
-- Calculate real-time unrealized profit/loss and investment returns.
-- Implement market data caching to reduce external API calls.
-- Introduce database schema versioning using Flyway.
-- Add automated unit and integration testing.
-- Explore Kafka-based event processing and stock price alerts.
+| Method | Endpoint | Description |
+|---|---|---|
+| POST

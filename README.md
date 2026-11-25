@@ -1,8 +1,8 @@
 # Stock Portfolio Management System
 
-A full-stack Stock Portfolio Management application built using **Java, Spring Boot, Spring Security, JWT Authentication, MySQL, and HTML/CSS/JavaScript**.
+A full-stack, multi-user Stock Portfolio Management application built using **Java 17, Spring Boot, Spring Security, JWT Authentication, MySQL, and HTML/CSS/JavaScript**.
 
-The application allows users to register, log in securely, manage their stock portfolios, and track buy/sell transactions.
+The application enables users to securely manage their stock portfolios, execute BUY/SELL transactions, track holdings, and maintain transaction history. It implements transaction processing logic, user-level authorization, and third-party financial API integration.
 
 ## Features
 
@@ -10,38 +10,55 @@ The application allows users to register, log in securely, manage their stock po
 - User registration with password encryption using BCrypt.
 - User login with JWT-based authentication.
 - Stateless authentication using Spring Security.
-- Protected REST APIs.
-- Portfolio access restricted to the authenticated user.
-- Current user identification through JWT.
+- Protected REST APIs using JWT authentication filters.
+- User-level authorization to restrict access to individual portfolios and transactions.
+- Current authenticated user identification through JWT.
 
 ### Portfolio Management
-- Add stocks to a portfolio.
-- Retrieve user-specific portfolio holdings.
-- View portfolio summary.
-- Track stock quantities and purchase prices.
+- Create and manage user-specific stock holdings.
+- Retrieve portfolio holdings based on the authenticated user.
+- Generate portfolio summaries, including total shares and investment value.
+- Track stock quantities and average purchase prices.
+- Maintain portfolio data with MySQL persistence.
 
 ### Transaction Management
-- Buy and sell stocks.
-- Maintain transaction history.
-- Calculate weighted average purchase price.
+- Implemented BUY and SELL transaction workflows.
+- Maintain transaction history with timestamps.
+- Calculate weighted average purchase price when additional shares are purchased.
+- Automatically update portfolio quantities after transactions.
 - Prevent selling more shares than currently owned.
 - Automatically remove a holding when its quantity reaches zero.
+- Associate transactions with the authenticated user instead of relying on client-supplied user IDs.
+
+### Market Data Integration
+- Integrated a third-party financial market data API using Spring's RestClient.
+- Retrieve stock prices using stock symbols.
+- Handle invalid symbols, provider errors, and API communication failures.
 
 ### Frontend
 - User registration and login pages.
-- Dashboard with dynamically loaded user details.
+- Dashboard displaying dynamically loaded portfolio and user information.
+- Separate dashboard sections for holdings, transactions, BUY, and SELL operations.
+- JWT-based API communication from the frontend.
 - Logout functionality.
-- HTML, CSS and JavaScript frontend served through Spring Boot.
+- Frontend built using HTML, CSS, and JavaScript.
+
+### Validation & Exception Handling
+- Request validation using Jakarta Bean Validation.
+- Business-rule validation for stock transactions.
+- Centralized exception handling for application errors.
+- Input validation for stock symbols and transaction details.
 
 ## Tech Stack
 
 | Category | Technologies |
 |---|---|
-| Language | Java 17 |
-| Backend | Spring Boot |
+| Programming Language | Java 17 |
+| Backend Framework | Spring Boot |
 | Security | Spring Security, JWT |
 | ORM | Spring Data JPA, Hibernate |
 | Database | MySQL |
+| API Integration | Spring RestClient, Twelve Data API |
 | Frontend | HTML, CSS, JavaScript |
 | Build Tool | Maven |
 | API Testing | Postman |
@@ -49,188 +66,90 @@ The application allows users to register, log in securely, manage their stock po
 
 ## Project Architecture
 
-The application follows a **layered architecture**, separating configuration, controllers, business logic, database operations, and entities.
-
-### Backend Structure
+The application follows a layered architecture, separating API endpoints, business logic, data access, and persistence.
 
 ```text
-src/main/java/com/portfolio/portfolio_app/
+src/main/java/com/portfolio/portfolio_app
 │
-├── config/
+├── config
 │   ├── SecurityConfig.java
-│   └── JwtAuthenticationFilter.java
+│   ├── JwtAuthenticationFilter.java
+│   └── MarketDataConfig.java
 │
-├── controller/
+├── controller
 │   ├── AuthController.java
 │   ├── UserController.java
 │   ├── PortfolioController.java
-│   └── TransactionController.java
+│   ├── TransactionController.java
+│   └── MarketDataController.java
 │
-├── dto/
-│   └── LoginRequest.java
+├── dto
+│   ├── LoginRequest.java
+│   ├── TransactionRequest.java
+│   ├── PortfolioSummaryDTO.java
+│   └── StockPriceResponse.java
 │
-├── entity/
+├── entity
 │   ├── User.java
 │   ├── Portfolio.java
 │   └── Transaction.java
 │
-├── repository/
+├── repository
+│   ├── UserRepository.java
+│   ├── PortfolioRepository.java
+│   └── TransactionRepository.java
 │
-├── service/
+├── service
 │   ├── CurrentUserService.java
 │   ├── CustomUserDetailsService.java
-│   └── JwtService.java
+│   ├── JwtService.java
+│   ├── PortfolioService.java
+│   ├── TransactionService.java
+│   └── MarketDataService.java
 │
-└── exception/
-```
+└── PortfolioAppApplication.java
 
-### Frontend and Configuration
-
-```text
-src/main/resources/
+src/main/resources
 │
-├── static/
+├── static
 │   ├── index.html
 │   ├── login.html
-│   └── register.html
+│   ├── register.html
+│   ├── css
+│   │   └── style.css
+│   └── js
+│       └── app.js
 │
 └── application.properties
 ```
 
-## Getting Started
-
-Follow these instructions to set up and run the application locally.
-
-### Prerequisites
-
-Make sure the following are installed:
-
-- Java 17 or later
-- Apache Maven
-- MySQL Server
-- Git
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Rithu-dev/Portfolio_App.git
-```
-
-Navigate to the project directory:
-
-```bash
-cd Portfolio_App
-```
-
-### 2. Create the MySQL Database
-
-Open MySQL and execute:
-
-```sql
-CREATE DATABASE portfolio_db;
-```
-
-### 3. Configure Application Properties
-
-Open `src/main/resources/application.properties` and configure your local database credentials and JWT settings.
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/portfolio_db
-spring.datasource.username=YOUR_DB_USERNAME
-spring.datasource.password=YOUR_DB_PASSWORD
-
-jwt.secret=YOUR_BASE64_SECRET
-jwt.expiration=86400000
-```
-
-**Important:**
-- Replace the database username and password with your local MySQL credentials.
-- Generate a secure Base64-encoded JWT secret.
-- Never commit actual database credentials or JWT secrets to GitHub.
-
-### 4. Run the Application
-
-Start the application using Maven:
-
-```bash
-mvn spring-boot:run
-```
-
-Once the application starts successfully, access it at:
-
-**Application URL:** http://localhost:8080
-
-**Registration:** http://localhost:8080/register.html
-
-**Login:** http://localhost:8080/login.html
-
-After registration, log in using your credentials to access the dashboard.
 ## API Endpoints
 
-All protected endpoints require a valid JWT token in the request header:
+All protected endpoints require a valid JWT token in the Authorization header.
 
 ```http
 Authorization: Bearer <your_jwt_token>
 ```
 
-### 1. Authentication
+### Authentication
 
-| Method | Endpoint | Description | Access |
-|:---:|---|---|:---:|
-| POST | `/users` | Register a new user | Public |
-| POST | `/auth/login` | Authenticate user and generate JWT | Public |
-| GET | `/users/me` | Retrieve authenticated user details | Protected |
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/users` | Register a new user |
+| POST | `/auth/login` | Authenticate user and generate JWT |
+| GET | `/users/me` | Retrieve authenticated user details |
 
-### 2. User Management
+### User Management
 
-| Method | Endpoint | Description | Access |
-|:---:|---|---|:---:|
-| GET | `/users` | Retrieve all users | Protected |
-| GET | `/users/{id}` | Retrieve user by ID | Protected |
-| PUT | `/users/{id}` | Update user details | Protected |
-| DELETE | `/users/{id}` | Delete user by ID | Protected |
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/users` | Retrieve all users |
+| GET | `/users/{id}` | Retrieve user by ID |
+| PUT | `/users/{id}` | Update user details |
+| DELETE | `/users/{id}` | Delete user by ID |
 
-### 3. Portfolio Management
+### Portfolio Management
 
-| Method | Endpoint | Description | Access |
-|:---:|---|---|:---:|
-| POST | `/portfolio` | Add a stock to the portfolio | Protected |
-| GET | `/portfolio/user/{userId}` | Retrieve portfolio holdings | Protected |
-| GET | `/portfolio/user/{userId}/summary` | Retrieve portfolio summary | Protected |
-
-### 4. Transaction Management
-
-| Method | Endpoint | Description | Access |
-|:---:|---|---|:---:|
-| POST | `/transactions` | Create a BUY/SELL transaction | Protected |
-| GET | `/transactions/user/{userId}` | Retrieve transaction history | Protected |
-
-## Security Implementation
-
-- Password encryption using BCrypt.
-- JWT-based authentication and authorization.
-- Custom JWT authentication filter integrated with Spring Security.
-- Stateless session management.
-- Protected REST APIs.
-- User-specific portfolio access control to prevent unauthorized access.
-
-## Future Enhancements
-
-- Integrate live stock market price APIs.
-- Connect dashboard metrics and holdings to backend APIs.
-- Complete frontend BUY/SELL transaction integration.
-- Enhance transaction history and portfolio visualizations.
-- Migrate monetary calculations from `double` to `BigDecimal`.
-- Implement database versioning using Flyway.
-- Add unit and integration tests.
-- Containerize the application using Docker.
-
-## Author
-
-**Rithu**
-- GitHub: [Rithu-dev](https://github.com/Rithu-dev)
-- Project Repository: [Stock Portfolio Management System](https://github.com/Rithu-dev/Portfolio_App)
-
----
-
-*Developed as a hands-on project to strengthen Java backend development skills and explore real-world application architecture.*
+| Method | Endpoint | Description |
+|---|---|---|
+| POST

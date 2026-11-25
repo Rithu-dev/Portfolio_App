@@ -23,11 +23,11 @@ public class TransactionService {
     @Transactional
     public Transaction addTransaction(Transaction transaction, User user) {
 
-        transaction.setUser(user);
-        if (transaction.getUser() == null ||
-                transaction.getUser().getId() == null) {
-            throw new IllegalArgumentException("User is required");
+        if (user == null || user.getId() == null) {
+            throw new IllegalArgumentException("Authenticated user is required");
         }
+
+        transaction.setUser(user);
 
         if (transaction.getStockName() == null ||
                 transaction.getStockName().isBlank()) {
@@ -73,9 +73,9 @@ public class TransactionService {
 
                 double totalInvestment = (existingPortfolio.getQuantity() * existingPortfolio.getPrice())
                         + (transaction.getQuantity() * transaction.getPrice());
-                
+
                 double averagePrice = totalInvestment / totalQuantity;
-                
+
                 existingPortfolio.setQuantity(totalQuantity);
                 existingPortfolio.setPrice(averagePrice);
 
